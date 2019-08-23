@@ -8,3 +8,5 @@
 #include <netinet/in.h>
 #define BACKLOG 10
 #define MAXDATASIZE 100
+#define BUFFSIZE 5
+

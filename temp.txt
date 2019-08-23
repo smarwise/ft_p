@@ -1,0 +1,13 @@
+author
+client
+client_obj
+client_src
+ft_p
+includes
+libft
+Makefile
+README.md
+server
+server_obj
+server_src
+temp.txt

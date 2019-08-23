@@ -1,36 +1,41 @@
-#include "../includes/ftp.h"
+#include "../includes/client.h"
+
+int 	make_connection(int port, char *name)
+{
+	int socketfd;
+	struct hostent *he;
+	struct sockaddr_in their_addr;
+
+	if ((he = gethostbyname(name)) == NULL)
+		handle_error(1);
+	if ((socketfd = socket(PF_INET, SOCK_STREAM, 0)) == -1)
+		handle_error (2);
+	their_addr.sin_family = AF_INET;
+	their_addr.sin_port = htons(port);
+	their_addr.sin_addr = *((struct in_addr *)he->h_addr);
+	ft_memset(their_addr.sin_zero, '\0', sizeof(their_addr.sin_zero));
+	if (connect(socketfd, (struct sockaddr *)&their_addr, sizeof(their_addr)) == -1)
+		handle_error(2);
+	ft_putendl("\033[1;12mConnected to server.....\033[0m");
+	while (1)
+	{
+		read_input(socketfd);
+	}
+	// close (socketfd);
+	return (0);
+}
 
 int	main(int argc, char **argv)
 {
-	int socketfd;
-	char buf[MAXDATASIZE];
-	struct hostent *he;
-	struct sockaddr_in their_addr;
+	
 	int port;
-	int numbytes;
-
 
 	if (argc == 3)
 	{
 		port = ft_atoi(argv[2]);
 		if (port > 0)
 		{
-			if ((he = gethostbyname(argv[1])) == NULL)
-				return (0);
-			if ((socketfd = socket(PF_INET, SOCK_STREAM, 0)) == -1)
-				return (0);
-			their_addr.sin_family = AF_INET;
-	        their_addr.sin_port = htons(port);
-	        their_addr.sin_addr.s_addr = INADDR_ANY;
-	        ft_memset(their_addr.sin_zero, '\0', sizeof(their_addr));
-			if (connect(socketfd, (struct sockaddr *)&their_addr, sizeof(their_addr)) == -1)
-				return(0);
-			ft_putendl("Connected to server.....");
-			if ((numbytes = recv(socketfd, buf, MAXDATASIZE-1, 0)) == -1)
-				return (0);
-			ft_putstr("Received info: ");
-			ft_putendl(buf);
-			close (socketfd);
+			return (make_connection(port, argv[1]));
 		}
 		return (0);
 	}
