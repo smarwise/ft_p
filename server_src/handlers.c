@@ -9,19 +9,21 @@ void  sigchild_handler()
 int		handle_error(int err)
 {
 	if (err == 0)
-		ft_putendl("Incorrect number of arguments");
+		ft_putendl("\033[1;31mIncorrect number of arguments\033[0m");
 	if (err == 1)
-		ft_putendl("Socket setup failed");
+		ft_putendl("\033[1;31mSocket setup failed\033[0m");
 	if (err == 2)
-		ft_putendl("Connecting failed");
+		ft_putendl("\033[1;31mConnecting failed\033[0m");
 	if (err == 3)
-		ft_putendl("Listening failed");
+		ft_putendl("\033[1;31mListening failed\033[0m");
 	if (err == 4)
-		ft_putendl("Signal not found");
+		ft_putendl("\033[1;31mSignal not found\033[0m");
 	if (err == 5)
-		ft_putendl("Accepting failed");
+		ft_putendl("\033[1;31mAccepting failed\033[0m");
 	if (err == 6)
-		ft_putendl("Sending failed");
+		ft_putendl("\033[1;31Sending failed\033[0m");
+	if (err == 7)
+		ft_putendl("\033[1;31m     No bytes sent\033[0m");
 	exit (0);
 }
 

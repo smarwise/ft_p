@@ -7,6 +7,6 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #define BACKLOG 10
-#define MAXDATASIZE 100
+#define MAXDATASIZE 1000
 #define BUFFSIZE 5
 
