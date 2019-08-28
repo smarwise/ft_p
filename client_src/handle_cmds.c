@@ -1,20 +1,9 @@
 #include "../includes/client.h"
 
-void handle_fail_success(int n)
-{
-	if (n == 0)
-	{
-		ft_putendl("\033[1;32m********** Server returned SUCCESS *********\033[0m\033[1;12m");
-		return;
-	}
-	ft_putendl("\033[1;31m********** Server returned FAILURE **********\033[0m");
-	exit(0);
-}
-
 void		handle_exit(int fd)
 {
 	close(fd);
-	ft_putendl("\033[0;31mConnection successfully closed\033[0m");
+	ft_putendl("\033[0;33mConnection successfully closed\033[0m");
 	exit(0);
 }
 
@@ -40,91 +29,65 @@ void		handle_pwd(int fd)
     free(buf);
 }
 
-void show_output(char *contents)
+void	handle_cd(int fd, char *str)
 {
-	char **ls;
-	int n;
-	int i;
+    int numbytes;
+    char buf[20];
 
-	n = 1;
-	i = 0;
-	handle_fail_success(0);
-    ls = ft_strsplit(contents, '\n');
-    while (ls[0][i] != ' ')
-    	i++;
-    ft_putstr(ls[0] + i + 1g);
-    ft_putchar(' ');
-    while (ls[n])
-    {
-        if (ft_strcmp(ls[n], "temp.txt") != 0)
-        {
-        	ft_putstr(ls[n]);
-        	ft_putstr(" ");
-        }
-        n++;
-    }
-    ft_putstr("\n\033[0m");
-    free_2d_array((void *)ls);
-}
-
-char 		*receive_all(int fd)
-{
-	int buflen;
-	char *buf;
-	char *tmp;
-	int numbytes;
-	int total;
-
-	numbytes = 0;
-	total = 0;
-	tmp = (char *)malloc(sizeof(char) * 1000);
-	if ((numbytes = recv(fd, tmp, 999, 0)) != -1)
-	    tmp[numbytes] = '\0';
-	else
-		handle_fail_success(-1);
-	buflen = ft_atoi(tmp);
-	buf = (char *)malloc(sizeof(char) * (buflen + 1));
-	total += numbytes;
-	buf = ft_strcat(buf, tmp);
-	while (total < buflen)
-	{
-		numbytes = recv(fd, tmp, 999, 0);
-		if (numbytes == -1)
-			handle_fail_success(-1);
-		tmp[numbytes] = '\0';
-	    buf = ft_strcat(buf, tmp);
-	    total += numbytes;
-	}
-	return(buf);
-}
-
-void		handle_ls(int fd)
-{
-	// int numbytes;
-	char *contents;
-
-	if ((send(fd, "ls", 2, 0)) == -1)
+    numbytes = 0;
+	if ((send(fd, str, ft_strlen(str), 0)) == -1)
         handle_error(6);
-    contents = receive_all(fd);
-	show_output(contents);
-    free(contents);
+    if ((numbytes = recv(fd, buf, 19, 0)) == -1)
+        handle_fail_success(-1);
+    if (numbytes > 0)
+    {
+        buf[numbytes] = '\0';
+        if (ft_strcmp(buf, "fail") == 0)
+            handle_fail_success(-1);
+        else
+            handle_fail_success(0);
+    }
 }
 
-int		handle_error(int errno)
+void    handle_put(int fd, char *str)
 {
-	if (errno == 0)
-		ft_putendl("Incorrect number of arguments");
-	if (errno == 1)
-		ft_putendl("No such host found");
-	if (errno == 2)
-		ft_putendl("Socket creation failed");
-	if (errno == 3)
-		ft_putendl("Listening failed");
-	if (errno == 4)
-		ft_putendl("Signal not found");
-	if (errno == 5)
-		ft_putendl("Accepting failed");
-	if (errno == 6)
-		ft_putendl("Sending failed");
-	exit (0);
+    char **file;
+    int f_d;
+    int i;
+    char buf[1000];
+    int numbytes;
+
+    file = ft_strsplit(str, ' ');
+    if ((f_d = open(file[1], O_RDONLY)) == -1)
+    {
+        handle_error(7);
+        return;
+    }
+    if ((send(fd, str, ft_strlen(str), 0)) == -1)
+        handle_error(6);
+    while (i <10000)
+        i++;
+    while ((numbytes = read(f_d, buf, 1000)) > 0)
+    {
+        if ((send(fd, buf, numbytes, 0)) == -1)
+            handle_error(6);
+    }
+    if ((numbytes = recv(fd, buf, 19, 0)) == -1)
+        handle_fail_success(-1);
+    if (numbytes > 0)
+    {
+        buf[numbytes] = '\0';
+        if (ft_strcmp(buf, "fail") == 0)
+            handle_fail_success(-1);
+        else
+            handle_fail_success(0);
+    }
+    free(file);
+}
+
+void    handle_get(int fd, char *str)
+{
+  ft_putendl("panotobudika chete, gore rino tichafara");
+  if ((send(fd, str, ft_strlen(str), 0)) == -1)
+        handle_error(6);
 }

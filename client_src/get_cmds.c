@@ -7,10 +7,19 @@ void		process_args(char *str, int fd)
 	array = ft_strsplit(str, ' ');
 	if (ft_strcmp(array[0], "quit") == 0)
 		handle_exit(fd);
-	if (ft_strcmp(array[0], "pwd") == 0)
+	else if (ft_strcmp(array[0], "pwd") == 0)
 		handle_pwd(fd);
-	if (ft_strcmp(array[0], "ls") == 0)
+	else if (ft_strcmp(array[0], "ls") == 0)
 		handle_ls(fd);
+	else if (ft_strcmp(array[0], "cd") == 0)
+		handle_cd(fd, str);
+	else if (ft_strcmp(array[0], "put") == 0)
+		handle_put(fd, str);
+	else if (ft_strcmp(array[0], "get") == 0)
+		handle_get(fd, str);
+	else
+		ft_putendl("\033[0;31mCommand not recognized\033[0m");
+	free_2d_array((void **)array);
 }
 
 char*		read_support(char c, int buff, int n, int i)
