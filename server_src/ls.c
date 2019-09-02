@@ -1,12 +1,12 @@
 #include "../includes/server.h"
 
-void    reader(char **result, int *ressize, char **buf, char *args[2])
+void    read_to_file(char *args[2])
 {
-    int k;
     int fd;
+    pid_t pid;
 
-    k = 0;
-    if (!fork())
+    pid = fork();
+    if ( pid == 0)
     {
         fd = open("temp.txt", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
         dup2(fd, 1);
@@ -14,6 +14,17 @@ void    reader(char **result, int *ressize, char **buf, char *args[2])
         close(fd);
         exit(0);
     }
+    else
+        wait4(pid, 0, 0, 0);
+}
+
+void    reader(char **result, int *ressize, char **buf, char *args[2])
+{
+    int k;
+    int fd;
+
+    k = 0;
+    read_to_file(args);
     fd = open("temp.txt", O_RDONLY);
     while (read(fd, *buf, 2000) > 0)
     {
@@ -26,9 +37,10 @@ void    reader(char **result, int *ressize, char **buf, char *args[2])
         k++;
     }
     close(fd);
+    unlink("temp.txt");
 }
 
-int     sendall(int fd, char *buf, int len)
+int     sendall(int fd, char *buf, int len, char *client_number)
 {
     int total;
     int bytesleft;
@@ -49,13 +61,13 @@ int     sendall(int fd, char *buf, int len)
         total += n;
         bytesleft -= n;
     }
-    ft_putendl("\033[1;32mls was a SUCCESS\033[0m");
-    free(size);
-    free(new);
+    print_msg("\033[1;32mls was a SUCCESS\033[0m", client_number);
+    // free(size);
+    // free(new);
     return (total);
 }
 
-void	ls_dir(int fd)
+void	ls_dir(int fd, char *client_number)
 {
     char *result;
     int ressize;
@@ -63,6 +75,7 @@ void	ls_dir(int fd)
     int len;
     int bytessent;
 
+    print_cmd("ls", client_number);
     ressize = 2000;
     result = malloc(sizeof(char) * 2000);
     buf = malloc(sizeof(char) * 2000);
@@ -71,11 +84,12 @@ void	ls_dir(int fd)
     result[0] = ' ';
     char *args[2] = {"ls", NULL};
     reader(&result, &ressize, &buf, args);
-    ft_putendl(result);
     len = ft_strlen(result);
-    free(buf);
-    bytessent = sendall(fd, result, len);
+    // free(buf);
+    // buf = NULL;
+    bytessent = sendall(fd, result, len, client_number);
     if (bytessent == 0)
         handle_error(7);
-    free(result);
+    // free(result);
+    // result = NULL;
 }

@@ -1,6 +1,0 @@
-get_cmds.c
-handle_cmds.c
-handlers.c
-ls.c
-main.c
-temp.txt

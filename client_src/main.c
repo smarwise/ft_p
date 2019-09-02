@@ -5,6 +5,9 @@ int 	make_connection(int port, char *name)
 	int socketfd;
 	struct hostent *he;
 	struct sockaddr_in their_addr;
+	char *client_number;
+	char buf[100];
+	// pid_t pid;
 
 	if ((he = gethostbyname(name)) == NULL)
 		handle_error(1);
@@ -17,11 +20,26 @@ int 	make_connection(int port, char *name)
 	if (connect(socketfd, (struct sockaddr *)&their_addr, sizeof(their_addr)) == -1)
 		handle_error(2);
 	ft_putendl("\033[1;12mConnected to server.....\033[0m");
-	while (1)
+	ft_memset(buf, '\0', 100);
+	if ((recv(socketfd, buf, 100, 0)) != -1)
+		client_number = ft_strdup(buf);
+	else
 	{
-		read_input(socketfd);
+		ft_putendl("get client_number failed");
+		exit(0);
 	}
-	// close (socketfd);
+	// pid = fork();
+	// if (pid == 0)
+	// {
+		while (1)
+		{
+			read_input(socketfd, client_number);
+		}
+		close (socketfd);
+	// 	exit (0);
+	// }
+	// else
+	// 	wait4(pid, 0, 0, 0);
 	return (0);
 }
 

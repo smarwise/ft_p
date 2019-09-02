@@ -29,23 +29,33 @@ int		handle_error(int err)
 	exit (0);
 }
 
-void	send_cmds(char *str, int fd)
+void	send_cmds(char *str, int fd, char *client_number)
 {
-	char *temp;
+	// char *temp;
+	pid_t pid;
 
-	temp = str;
-	if (ft_strcmp("pwd", str) == 0)
-		show_pwd(fd);
-	if (ft_strcmp("ls", str) == 0)
-		ls_dir(fd);
-	if (ft_strnstr(str, "cd", 2))
-		cd_dir(fd, str);
-	if (ft_strnstr(str, "put", 3))
-		put_file(fd, str);
-	if (ft_strnstr(str, "get", 3))
-		get_file(fd, str);
-	free(temp);
-	free(str);
+	// temp = str;
+		if (ft_strcmp("pwd", str) == 0)
+			show_pwd(fd, client_number);
+		if (ft_strcmp("ls", str) == 0)
+		{
+			pid = fork();
+			if (pid == 0)
+			{
+				ls_dir(fd, client_number);
+				exit (0);
+			}
+			else
+				wait4(pid, 0, 0, 0);
+		}
+		if (ft_strnstr(str, "cd", 2))
+			cd_dir(fd, str, client_number);
+		if (ft_strnstr(str, "put", 3))
+			put_file(fd, str, client_number);
+		if (ft_strnstr(str, "get", 3))
+			get_file(fd, str, client_number);
+	// free(temp);
+	// free(str);
 }
 
 void	send_result(int n, int fd)
@@ -60,4 +70,22 @@ void	send_result(int n, int fd)
 		if ((send(fd, "success", 7, 0)) == -1)
         	handle_error(6);
 	}
+}
+
+void	print_cmd(char *str, char *client_number)
+{
+	ft_putstr("Server[");
+	ft_putstr(client_number);
+	ft_putstr("]: ");
+	ft_putstr("\033[1;34mCommand to ");
+	ft_putstr(str);
+	ft_putendl(" received\033[1;0m");
+}
+
+void	print_msg(char *msg, char *client_number)
+{
+	ft_putstr("Server[");
+	ft_putstr(client_number);
+	ft_putstr("]: ");
+	ft_putendl(msg);
 }

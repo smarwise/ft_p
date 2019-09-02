@@ -19,7 +19,7 @@ void		process_args(char *str, int fd)
 		handle_get(fd, str);
 	else
 		ft_putendl("\033[0;31mCommand not recognized\033[0m");
-	free_2d_array((void **)array);
+	// free_2d_array((void **)array);
 }
 
 char*		read_support(char c, int buff, int n, int i)
@@ -50,7 +50,7 @@ char*		read_support(char c, int buff, int n, int i)
 	return cmd;
 }
 
-int		read_input(int fd)
+int		read_input(int fd, char *client_number)
 {
 	char c;
 	int buff;
@@ -62,7 +62,9 @@ int		read_input(int fd)
 	n = 0;
 	c = ' ';
 	buff = BUFFSIZE;
-	ft_putstr("\033[1;36mft_p> \033[0m");
+	ft_putstr("\033[1;36mft_p[");
+	ft_putstr(client_number);
+	ft_putstr("]> \033[0m");
 	cmd = read_support(c, buff, i, n);
 	process_args(cmd, fd);
 	return (0);

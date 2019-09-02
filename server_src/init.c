@@ -1,5 +1,19 @@
 #include "../includes/server.h"
 
+char    *get_client_nu()
+{
+    static int i = 1;
+    char *client_number;
+    char *tmp;
+    char tmp2[2] = "00";
+
+    tmp = ft_itoa(i);
+    client_number = ft_strjoin(tmp2, tmp);
+    free(tmp);
+    i++;
+    return (client_number);
+}
+
 int    init_struct(struct sockaddr_in *sa, int port, int socketfd)
 {
     struct sigaction sig;
@@ -17,18 +31,12 @@ int    init_struct(struct sockaddr_in *sa, int port, int socketfd)
     sig.sa_handler = sigchild_handler;
     sigemptyset(&sig.sa_mask);
     sig.sa_flags = SA_RESTART;
-    if (sigaction(SIGCHLD, &sig, NULL) == -1)
-    {
-        ft_putendl("sigaction");
-        exit(0);
-    }
-    // if (signal(1,sigchild_handler) == SIG_ERR)
-    //     return (handle_error(4));
-
+    if (signal(1,sigchild_handler) == SIG_ERR)
+        return (handle_error(4));
     return 0;
 }
 
-void    receive_data(int fd)
+void    receive_data(int fd, char *client_number)
 {
     // char buf[MAXDATASIZE];
     int     numbytes;
@@ -42,10 +50,7 @@ void    receive_data(int fd)
         if (numbytes > 0)
         {
             buf[numbytes] = '\0';
-            ft_putstr("\033[1;34mServer: Command to ");
-            ft_putstr(buf);
-            ft_putendl(" received\033[1;0m");
-            send_cmds(buf, fd);
+            send_cmds(buf, fd, client_number);
         }
     }
 }
@@ -60,7 +65,9 @@ int	 be_connected(int socketfd, struct sockaddr_in *their_addr)
 { 
 	int new_fd;
     socklen_t sin_size;
-    int pid;
+    // int pid;
+    char *ip;
+    char *client_number;
     
     while (42)
     {
@@ -68,17 +75,32 @@ int	 be_connected(int socketfd, struct sockaddr_in *their_addr)
         if ((new_fd  = accept(socketfd,
                 (struct sockaddr *)their_addr, &sin_size)) != -1 )
         {
-            ft_putstr("\033[1;32mServer: got connection from \033[1;0m");
-            ft_putendl(inet_ntoa(their_addr->sin_addr));
-            pid = fork();
-            if (pid == 0)
+            ip = get_ip(their_addr);
+            client_number = get_client_nu();
+            ft_putstr("\033[1;32mServer: got connection from \033[1;0m(");
+            ft_putstr(ip);
+            ft_putstr(") [");
+            ft_putstr(client_number);
+            ft_putendl("]");
+            if (send(new_fd, client_number, ft_strlen(client_number), 0) == -1)
+            {
+                ft_putendl("get client_number failed");
+                return -1;
+            }
+            // pid = fork();
+            if (!fork())
             {
                 close(socketfd);
-                receive_data(new_fd);
+                receive_data(new_fd, client_number);
                 close(new_fd);
                 exit(0);
             }
-            close(new_fd);
+            // else
+            // {
+            //     wait4(pid, 0, 0, 0);
+            //     close(new_fd);
+            //     // exit(0);
+            // }
         }
         else
         {
@@ -86,6 +108,7 @@ int	 be_connected(int socketfd, struct sockaddr_in *their_addr)
             exit (0);
         }
     }
+    // free(ip);
     return 0;
 }
 
