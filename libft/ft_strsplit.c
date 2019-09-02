@@ -43,6 +43,7 @@ char				**ft_strsplit(char const *s, char c)
 	t = 0;
 	n = 0;
 	str = (char *)s;
+	tab = NULL;
 	if (s == NULL || ((tab = (char **)malloc(sizeof(char *)
 		* (word_count(s, c) + 1))) == NULL)) 
 		return (NULL);

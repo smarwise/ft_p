@@ -26,7 +26,8 @@ void		handle_pwd(int fd)
         ft_putendl(buf);
         ft_putstr("\033[0m");
     }
-    // free(buf);
+    free(buf);
+    buf = NULL;
 }
 
 void	handle_cd(int fd, char *str)
@@ -113,7 +114,8 @@ void    handle_put(int fd, char *str)
         else
             handle_fail_success(0);
     }
-    // free_2d_array((void**)file);
+    free_2d_array((void**)file);
+    file = NULL;
 }
 
 void    put_msg(int n)
@@ -150,6 +152,6 @@ void    handle_get(int fd, char *str)
     }
     if (numbytes != -1)
         ft_putendl("\033[0;32mDownloading file successful\033[0m");
-    // free_2d_array((void**)name);
+    free_2d_array((void**)name);
     close(fd1);
 }

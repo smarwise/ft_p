@@ -28,18 +28,14 @@ int 	make_connection(int port, char *name)
 		ft_putendl("get client_number failed");
 		exit(0);
 	}
-	// pid = fork();
-	// if (pid == 0)
-	// {
 		while (1)
 		{
 			read_input(socketfd, client_number);
 		}
+		free(client_number);
+		client_number = NULL;
+		// free(name);
 		close (socketfd);
-	// 	exit (0);
-	// }
-	// else
-	// 	wait4(pid, 0, 0, 0);
 	return (0);
 }
 

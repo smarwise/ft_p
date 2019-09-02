@@ -24,6 +24,7 @@ void show_output(char *contents)
 
 	n = 1;
 	handle_fail_success(0);
+	ls = NULL;
     ls = ft_strsplit(contents, '\n');
     print_first(ls);
     while (ls[n] != NULL)
@@ -36,7 +37,8 @@ void show_output(char *contents)
         n++;
     }
     ft_putstr("\n\033[0m");
-    // free_2d_array((void **)ls);
+    // free_2d_array((void **)ls);  
+    ls = NULL;
 }
 
 char 		*receive_all(int fd)
@@ -49,6 +51,7 @@ char 		*receive_all(int fd)
 
 	numbytes = 0;
 	total = 0;
+	buf = NULL;
 	ft_memset(tmp, '\0', 1000);
 	if ((numbytes = recv(fd, tmp, 999, 0)) == -1)
 		handle_fail_success(-1);
@@ -72,9 +75,10 @@ void		handle_ls(int fd)
 {
 	char *contents;
 
+    contents = NULL;
 	if ((send(fd, "ls", 2, 0)) == -1)
         handle_error(6);
     contents = receive_all(fd);
 	show_output(contents);
-    // free(contents);
+    free(contents);
 }
