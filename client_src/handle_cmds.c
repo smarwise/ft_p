@@ -70,9 +70,6 @@ int    get_ready(int fd, char buf[1000], char **file, char *str)
     }
     ft_putendl(buf);
     ft_putnbr(numbytes);
-    // if (numbytes > 0)
-    // {
-        // buf[numbytes] = '\0';
         if (ft_strncmp(buf, "ready", 5) != 0)
         {
             ft_putendl("not ready");
@@ -80,7 +77,6 @@ int    get_ready(int fd, char buf[1000], char **file, char *str)
             return -1;
         }
         ft_putendl("ready");
-    // }
     close(f_d);
     return 0;
 }
@@ -133,12 +129,14 @@ void    handle_get(int fd, char *str)
     int fd1;
     int numbytes;
     char buf[1000];
+    char    *new_file;
 
     name = ft_strsplit(str, ' ');
-    if ((fd1 = open(name[1], O_RDONLY)) != -1)
+    new_file = ft_strjoin("downloads/", name[1]);
+    if ((fd1 = open(new_file, O_RDONLY)) != -1)
         return (put_msg(0));
     close(fd1);
-    if ((fd1 = open(name[1], O_RDWR | O_CREAT,
+    if ((fd1 = open(new_file, O_RDWR | O_CREAT,
         S_IRUSR | S_IWUSR)) == -1)
         return(put_msg(1));
     ft_memset(buf, '\0', 1000);

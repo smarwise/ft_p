@@ -85,11 +85,7 @@ void	ls_dir(int fd, char *client_number)
     char *args[2] = {"ls", NULL};
     reader(&result, &ressize, &buf, args);
     len = ft_strlen(result);
-    // free(buf);
-    // buf = NULL;
     bytessent = sendall(fd, result, len, client_number);
     if (bytessent == 0)
         handle_error(7);
-    // free(result);
-    // result = NULL;
 }

@@ -2,7 +2,6 @@
 
 void  sigchild_handler()
 {
-    // while (waitpid(-1, NULL, WNOHANG) > 0);
     while (wait4(-1, NULL, WNOHANG, NULL) > 0);
 }
 
@@ -31,31 +30,27 @@ int		handle_error(int err)
 
 void	send_cmds(char *str, int fd, char *client_number)
 {
-	// char *temp;
 	pid_t pid;
 
-	// temp = str;
-		if (ft_strcmp("pwd", str) == 0)
-			show_pwd(fd, client_number);
-		if (ft_strcmp("ls", str) == 0)
+	if (ft_strcmp("pwd", str) == 0)
+		show_pwd(fd, client_number);
+	if (ft_strcmp("ls", str) == 0)
+	{
+		pid = fork();
+		if (pid == 0)
 		{
-			pid = fork();
-			if (pid == 0)
-			{
-				ls_dir(fd, client_number);
-				exit (0);
-			}
-			else
-				wait4(pid, 0, 0, 0);
+			ls_dir(fd, client_number);
+			exit (0);
 		}
-		if (ft_strnstr(str, "cd", 2))
-			cd_dir(fd, str, client_number);
-		if (ft_strnstr(str, "put", 3))
-			put_file(fd, str, client_number);
-		if (ft_strnstr(str, "get", 3))
-			get_file(fd, str, client_number);
-	// free(temp);
-	// free(str);
+		else
+			wait4(pid, 0, 0, 0);
+	}
+	if (ft_strnstr(str, "cd", 2))
+		cd_dir(fd, str, client_number);
+	if (ft_strnstr(str, "put", 3))
+		put_file(fd, str, client_number);
+	if (ft_strnstr(str, "get", 3))
+		get_file(fd, str, client_number);
 }
 
 void	send_result(int n, int fd)

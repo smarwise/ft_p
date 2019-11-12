@@ -5,10 +5,13 @@ char    *get_client_nu()
     static int i = 1;
     char *client_number;
     char *tmp;
-    char tmp2[2] = "00";
+    char *tmp2;
 
     tmp = ft_itoa(i);
-    client_number = ft_strjoin(tmp2, tmp);
+    tmp2 = ft_strdup("00");
+    client_number = ft_strnew(50);
+    client_number = ft_memset(client_number, '\0', 50);
+    client_number = ft_strcat(tmp2, tmp);
     free(tmp);
     i++;
     return (client_number);
@@ -38,7 +41,6 @@ int    init_struct(struct sockaddr_in *sa, int port, int socketfd)
 
 void    receive_data(int fd, char *client_number)
 {
-    // char buf[MAXDATASIZE];
     int     numbytes;
     char *buf;
 
@@ -65,7 +67,6 @@ int	 be_connected(int socketfd, struct sockaddr_in *their_addr)
 { 
 	int new_fd;
     socklen_t sin_size;
-    // int pid;
     char *ip;
     char *client_number;
     
@@ -87,7 +88,6 @@ int	 be_connected(int socketfd, struct sockaddr_in *their_addr)
                 ft_putendl("get client_number failed");
                 return -1;
             }
-            // pid = fork();
             if (!fork())
             {
                 close(socketfd);
@@ -95,12 +95,6 @@ int	 be_connected(int socketfd, struct sockaddr_in *their_addr)
                 close(new_fd);
                 exit(0);
             }
-            // else
-            // {
-            //     wait4(pid, 0, 0, 0);
-            //     close(new_fd);
-            //     // exit(0);
-            // }
         }
         else
         {
@@ -108,7 +102,6 @@ int	 be_connected(int socketfd, struct sockaddr_in *their_addr)
             exit (0);
         }
     }
-    // free(ip);
     return 0;
 }
 

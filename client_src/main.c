@@ -7,7 +7,6 @@ int 	make_connection(int port, char *name)
 	struct sockaddr_in their_addr;
 	char *client_number;
 	char buf[100];
-	// pid_t pid;
 
 	if ((he = gethostbyname(name)) == NULL)
 		handle_error(1);
@@ -34,7 +33,6 @@ int 	make_connection(int port, char *name)
 		}
 		free(client_number);
 		client_number = NULL;
-		// free(name);
 		close (socketfd);
 	return (0);
 }
