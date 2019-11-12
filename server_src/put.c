@@ -33,7 +33,6 @@ int     check_file(char *file_name, int fd, char *client_number)
         close(fd1);
         return -1;
     }
-    print_msg("successfully passed check_file", client_number);
     close(fd1);
     return 0;
 }

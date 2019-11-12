@@ -36,5 +36,7 @@ fclean: clean
 	make fclean -C libft/
 	rm -f $(client)
 	rm -rf $(server)
+	rm files/*
+	rm downloads/*
 
 re: fclean all

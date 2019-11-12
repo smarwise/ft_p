@@ -16,8 +16,11 @@ int     check_if_file(char *filename)
     fd = open(filename, O_RDONLY);
     n = 1;
     if (fstat(fd, &st) < 0)
-        return -1;
-    if (S_ISDIR(st.st_mode))
+    {
+        ft_err("File does not exist");
+        n = -1;
+    }
+    else if (S_ISDIR(st.st_mode))
     {
         ft_err("Selected file is a directory");
         n = -1;
