@@ -6,6 +6,7 @@
 #include <signal.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <sys/stat.h>
 #define BACKLOG 10
 #define MAXDATASIZE 1000
 #define BUFFSIZE 5

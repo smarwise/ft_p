@@ -10,3 +10,5 @@ void handle_fail_success(int n);
 void	handle_cd(int fd, char *str);
 void    handle_put(int fd, char *str);
 void    handle_get(int fd, char *str);
+void	ft_err(char *error);
+void	ft_success(char *msg);
