@@ -14,7 +14,7 @@ void		process_args(char *str, int fd)
 	else if (ft_strcmp(array[0], "cd") == 0)
 		handle_cd(fd, str);
 	else if (ft_strcmp(array[0], "put") == 0)
-		handle_put(fd, str);
+		handle_put(fd, array, str);
 	else if (ft_strcmp(array[0], "get") == 0)
 		handle_get(fd, str);
 	else

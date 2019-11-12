@@ -54,28 +54,23 @@ int    get_ready(int fd, char buf[1000], char **file, char *str)
     return 0;
 }
 
-void    handle_put(int fd, char *str)
+void    handle_put(int fd, char **file, char *str)
 {
-    char **file;
-    int f_d;
+    int fd2;
     char buf[1000];
     int numbytes;
 
-    file = ft_strsplit(str, ' ');
-    f_d = open(file[1], O_RDONLY);
     if (get_ready(fd, buf, file, str) == -1)
         return;
-    while ((numbytes = read(f_d, buf, 1000)) > 0)
+    fd2 = open(file[1], O_RDONLY);
+    while ((numbytes = read(fd2, buf, 1000)) > 0)
     {
         if ((send(fd, buf, numbytes, 0)) == -1)
             handle_error(6);
     }
     if ((numbytes = recv(fd, buf, 19, 0)) == -1)
-    {
         handle_fail_success(-1);
-        return;
-    }
-    if (numbytes > 0)
+    else if (numbytes > 0)
     {
         buf[numbytes] = '\0';
         if (ft_strcmp(buf, "fail") == 0)
@@ -83,6 +78,4 @@ void    handle_put(int fd, char *str)
         else
             handle_fail_success(0);
     }
-    free_2d_array((void**)file);
-    file = NULL;
 }
