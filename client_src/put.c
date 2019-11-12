@@ -66,7 +66,7 @@ void    handle_put(int fd, char **file, char *str)
     if (get_ready(fd, buf, file, str) == -1)
         return;
     fd2 = open(file[1], O_RDONLY);
-    while ((numbytes = read(fd2, buf, 1000)) > 0)
+    while ((numbytes = read(fd2, buf, 999)) > 0)
     {
         if ((send(fd, buf, numbytes, 0)) == -1)
             handle_error(6);
