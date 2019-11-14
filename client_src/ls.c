@@ -1,17 +1,17 @@
 #include "../includes/client.h"
 
-void	print_first(char **ls)
+void	print_first(char *ls)
 {
 	int i;
 
 	i = 0;
-	if (ls[0] != NULL)
+	if (ls != NULL)
 	{
-		while ( ls[0][i] != ' ')
+		while ( ls[i] != ' ')
 	    	i++;
-	    if (ft_strcmp(ls[0] + i + 1, "temp.txt") != 0)
+	    if (ft_strcmp(ls + i + 1, "temp.txt") != 0)
 	    {
-	    	ft_putstr(ls[0] + i + 1);
+	    	ft_putstr(ls + i + 1);
 	    	ft_putchar(' ');
 	    }
 	}
@@ -24,16 +24,18 @@ void show_output(char *contents)
 
 	n = 1;
 	handle_fail_success(0);
-	ls = NULL;
+	// ls = NULL;
+	ft_putendl(contents);
     ls = ft_strsplit(contents, '\n');
-    print_first(ls);
+    print_first(ls[0]);
     while (ls[n] != NULL)
     {
-        if (ft_strcmp(ls[n], "temp.txt") != 0)
-        {
-        	ft_putstr(ls[n]);
-        	ft_putstr(" ");
-        }
+		ft_putendl(ls[n]);
+        // if (ft_strcmp(ls[n], "temp.txt") != 0)
+        // {
+        // 	ft_putstr(ls[n]);
+        // 	ft_putstr(" ");
+        // }
         n++;
     }
     ft_putstr("\n\033[0m");

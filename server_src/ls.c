@@ -62,8 +62,6 @@ int     sendall(int fd, char *buf, int len, char *client_number)
         bytesleft -= n;
     }
     print_msg("\033[1;32mls was a SUCCESS\033[0m", client_number);
-    // free(size);
-    // free(new);
     return (total);
 }
 
