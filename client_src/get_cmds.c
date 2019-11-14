@@ -23,10 +23,10 @@ void		process_args(char *str, int fd)
 	array = NULL;
 }
 
-char*		read_support(char c, int buff, int n, int i)
+char		*read_support(char c, int buff, int n, int i)
 {
-	char *cmd;
-
+	char	*cmd;
+	
 	cmd = (char *)malloc(sizeof(char) * BUFFSIZE);
 	while (n < buff)
 	{
