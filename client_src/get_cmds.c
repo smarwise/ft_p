@@ -21,8 +21,8 @@ void		process_args(char *str, int fd)
 		handle_exit(fd);
 	else if (ft_strcmp(array[0], "pwd") == 0)
 		handle_pwd(fd);
-	else if (ft_strcmp(array[0], "ls") == 0)
-		handle_ls(fd);
+	else if (ft_strstr("ls", str) == 0)
+		handle_ls(fd, str);
 	else if (ft_strcmp(array[0], "cd") == 0)
 		handle_cd(fd, str);
 	else if (ft_strcmp(array[0], "put") == 0)

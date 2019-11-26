@@ -20,7 +20,6 @@ void handle_fail_success(int n)
 		return;
 	}
 	ft_err("********** Server returned FAILURE **********");
-	// exit(0);
 }
 
 int		handle_error(int errno)

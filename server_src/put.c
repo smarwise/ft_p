@@ -12,6 +12,14 @@
 
 #include "../includes/server.h"
 
+void    create_if_not_exists(char *dir_name)
+{
+    struct stat st;
+
+    if (stat(dir_name, &st) == -1)
+        mkdir(dir_name, 0700);
+}
+
 char    *get_file_name(char *str)
 {
     char **name;
@@ -87,6 +95,7 @@ void    put_file(int fd, char *str, char *client_number)
     fd1 = 0;
     if (check_file(file_name, fd, client_number) == -1)
         return;
+    create_if_not_exists("files");
     if (make_file(fd, fd1, file_name) == -1)
         return;
     else

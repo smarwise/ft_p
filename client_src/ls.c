@@ -105,11 +105,12 @@ char 		*receive_all(int fd)
 	return(buf);
 }
 
-void		handle_ls(int fd)
+void		handle_ls(int fd, char *str)
 {
 	char *contents;
 
     contents = NULL;
+	ft_putendl(str);
 	if ((send(fd, "ls", 2, 0)) == -1)
         handle_error(6);
     contents = receive_all(fd);

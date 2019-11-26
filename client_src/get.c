@@ -12,6 +12,14 @@
 
 #include "../includes/client.h"
 
+void    create_if_not_exists(char *dir_name)
+{
+    struct stat st;
+
+    if (stat(dir_name, &st) == -1)
+        mkdir(dir_name, 0700);
+}
+
 int   put_msg(int n)
 {
 	if (n == 0)
@@ -56,6 +64,7 @@ void			handle_get(int fd, char *str)
 
 	name = ft_strsplit(str, ' ');
 	new_file = ft_strjoin("downloads/", name[1]);
+	create_if_not_exists("downloads");
 	if (check_file_exists(new_file, name[1]) == -1)
 		return ;
 	if ((fd1 = open(new_file, O_RDWR | O_CREAT,\
