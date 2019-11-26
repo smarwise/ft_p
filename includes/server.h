@@ -1,7 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: smarwise <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/11/26 07:46:16 by smarwise          #+#    #+#             */
+/*   Updated: 2019/11/26 07:46:18 by smarwise         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef SERVER_H
+#define SERVER_H
+
 #include "ftp.h"
 #include <dirent.h>
 #include <fcntl.h>
-// #include <errno.h>
 
 int   init(char *str);
 void  sigchild_handler();
@@ -18,3 +32,5 @@ char    *get_file_name(char *str);
 void	print_cmd(char *str, char *client_number);
 char    *get_ip(struct sockaddr_in *sa);
 void	print_msg(char *msg, char *client_number);
+
+#endif

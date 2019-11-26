@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   put.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: smarwise <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/11/26 07:45:51 by smarwise          #+#    #+#             */
+/*   Updated: 2019/11/26 07:45:54 by smarwise         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/server.h"
 
 char    *get_file_name(char *str)
@@ -42,6 +54,7 @@ int    make_file(int fd, int fd1, char *file_name)
     char buf[1000];
     int numbytes;
 
+    ft_putendl(file_name);
     if ((fd1 = open(file_name, O_RDWR | O_CREAT,
         S_IRUSR | S_IWUSR)) == -1)
     {
