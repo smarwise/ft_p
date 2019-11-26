@@ -30,72 +30,26 @@ void	print_arr(char **ls)
     ft_putstr("\n\033[0m");
 }
 
-void	get_arr(char *ls, char **arr)
-{
-	int n;
-	int i;
-	int j;
-
-	n = 0;
-	j = 0;
-	while (ls[n])
-    {
-		i = 0;
-		arr[j] = (char*)malloc(sizeof(char) * 3000);
-		while (ls[n] != '\n' && ls[n] != '\0')
-		{
-			arr[j][i] = ls[n];
-			n++;
-			i++;
-		}
-		arr[j][i] = '\0';
-		j++;
-		if (ls[n] == '\n')
-			n++;
-    }
-	arr[j] = NULL;
-}
-
-void show_output(char *contents)
-{
-	char *real_contents;
-	int n;
-	char **ls;
-
-	n = 0;
-	handle_fail_success(0);
-	while (contents[n] != ' ')
-		n++;
-	while (contents[n] == ' ')
-		n++;
-	real_contents = ft_strsub(contents, n, ft_strlen(contents) - n);
-	ls = (char**)malloc(sizeof(char*) * 1000);
-	get_arr(real_contents, ls);
-	print_arr(ls);
-}
 
 char 		*receive_all(int fd, int numbytes, int total)
 {
-	int 	buflen;
 	char	*buf;
 	char 	tmp[1000];
 
 	buf = NULL;
 	ft_memset(tmp, '\0', 1000);
-	if ((numbytes = recv(fd, tmp, 999, 0)) == -1)
-		handle_fail_success(-1);
-	buflen = ft_atoi(tmp);
-	buf = (char *)malloc(sizeof(char) * (buflen + 2));
-	ft_memset(buf, '\0', buflen + 2);
-	total += numbytes;
-	buf = ft_strcat(buf, tmp);
-	while (total < buflen)
+	buf = (char *)malloc(sizeof(char) * (1000));
+	ft_memset(buf, '\0', 1000);
+	total = 0;
+	ft_memset(tmp, '\0', 1000);
+	while ((numbytes = recv(fd, tmp, 999, 0)) > 0)
 	{
-		ft_memset(tmp, '\0', 1000);
-		if ((numbytes = recv(fd, tmp, 999, 0)) == -1)
-			handle_fail_success(-1);
 	    buf = ft_strcat(buf, tmp);
 	    total += numbytes;
+	    if (numbytes < 999)
+	    	break;
+	    buf = realloc(buf, total + 1000);
+		ft_memset(tmp, '\0', 1000);
 	}
 	buf[total + 1] = '\0';
 	return(buf);
@@ -104,26 +58,10 @@ char 		*receive_all(int fd, int numbytes, int total)
 int			check_input(char *str)
 {
 	char **array;
-	char *arr[] = {"-a", "-d", "-F", "-l", "-a", "-lh", "-ls",\
-	"-r", "-R", "-S", "-s", "-t", "-x", "-la", "-f", NULL};
-	int n;
 	
 	array = ft_strsplit(str, ' ');
-	n = 0;
 	if (arraylen(array) <= 2)
-	{
-		if (arraylen(array) == 2)
-		{
-			while (arr[n])
-			{
-				if (ft_strcmp(arr[n], array[1]) == 0)
-					return (1);
-				n++;
-			}
-		}
-		else
-			return (1);
-	}
+		return (1);
 	return (0);
 }
 
@@ -137,7 +75,7 @@ void		handle_ls(int fd, char *str)
 		if ((send(fd, str, ft_strlen(str), 0)) == -1)
 			handle_error(6);
 		contents = receive_all(fd, 0, 0);
-		show_output(contents);
+		print_arr(ft_strsplit(contents, '\n'));
 		free(contents);
 	}
 	else
