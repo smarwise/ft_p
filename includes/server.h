@@ -20,7 +20,7 @@
 int   init(char *str);
 void  sigchild_handler();
 int   handle_error(int err);
-void	ls_dir(int fd, char *client_number);
+void	ls_dir(int fd, char *client_number, char *str);
 void	show_pwd(int fd, char *client_number);
 void	send_cmds(char *str, int fd, char *client_number);
 void handle_fail_success(int n);

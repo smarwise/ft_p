@@ -46,12 +46,12 @@ void	send_cmds(char *str, int fd, char *client_number)
 
 	if (ft_strcmp("pwd", str) == 0)
 		show_pwd(fd, client_number);
-	if (ft_strstr("ls", str))
+	if (ft_strstr(str, "ls"))
 	{
 		pid = fork();
 		if (pid == 0)
 		{
-			ls_dir(fd, client_number);
+			ls_dir(fd, client_number, str);
 			exit (0);
 		}
 		else

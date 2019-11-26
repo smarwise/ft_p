@@ -30,6 +30,27 @@ void    read_to_file(char *args[2])
         wait4(pid, 0, 0, 0);
 }
 
+void    get_file_len(int *ressize, char **result, char **buf)
+{
+    int fd;
+    char buffer[1001];
+    int numbytes;
+
+    ft_memset(buffer, '\0', 1001);
+    fd = open("temp.txt", O_RDONLY);
+    *ressize = 0;
+    while ((numbytes = read(fd, buffer, 1000)) > 0)
+    {
+        *ressize += numbytes;
+    }
+    close(fd);
+    *result = malloc(sizeof(char) * (*ressize + 5));
+    *buf = malloc(sizeof(char) * (*ressize + 5));
+    ft_memset(*result, '\0', *ressize + 5);
+    ft_memset(*buf, '\0', *ressize + 5);
+    *result[0] = ' ';
+}
+
 void    reader(char **result, int *ressize, char **buf, char *args[2])
 {
     int k;
@@ -37,6 +58,7 @@ void    reader(char **result, int *ressize, char **buf, char *args[2])
 
     k = 0;
     read_to_file(args);
+    get_file_len(ressize, result, buf);
     fd = open("temp.txt", O_RDONLY);
     while (read(fd, *buf, 2000) > 0)
     {
@@ -46,6 +68,7 @@ void    reader(char **result, int *ressize, char **buf, char *args[2])
             *result = realloc(*result, *ressize);
         }
         *result = ft_strcat(*result, *buf);
+        ft_memset(*buf, '\0', *ressize + 5);
         k++;
     }
     close(fd);
@@ -77,25 +100,27 @@ int     sendall(int fd, char *buf, int len, char *client_number)
     return (total);
 }
 
-void	ls_dir(int fd, char *client_number)
+void	ls_dir(int fd, char *client_number, char *str)
 {
     char *result;
     int ressize;
     char *buf;
-    int len;
+    char **array;
     int bytessent;
 
     print_cmd("ls", client_number);
-    ressize = 2000;
-    result = malloc(sizeof(char) * 2000);
-    buf = malloc(sizeof(char) * 2000);
-    ft_memset(result, '\0', 2000);
-    ft_memset(buf, '\0', 2000);
-    result[0] = ' ';
-    char *args[2] = {"ls", NULL};
-    reader(&result, &ressize, &buf, args);
-    len = ft_strlen(result);
-    bytessent = sendall(fd, result, len, client_number);
+    array = ft_strsplit(str, ' ');
+    if (arraylen(array) == 2)
+    {
+        char *args[3] = {"ls", array[1], NULL};
+        reader(&result, &ressize, &buf, args);
+    }
+    else
+    {
+        char *args[2] = {"ls", NULL};
+        reader(&result, &ressize, &buf, args);
+    }
+    bytessent = sendall(fd, result, ft_strlen(result), client_number);
     if (bytessent == 0)
         handle_error(7);
 }

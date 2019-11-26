@@ -19,10 +19,10 @@ void	print_arr(char **ls)
 	n = 0;
 	while (ls[n])
     {
-        if (ft_strcmp(ls[n], "temp.txt") != 0)
+        if (!(ft_strstr(ls[n], "temp.txt")))
         {
         	ft_putstr(ls[n]);
-        	ft_putstr(" ");
+        	ft_putstr("\n");
         }
         n++;
     }
@@ -105,15 +105,45 @@ char 		*receive_all(int fd)
 	return(buf);
 }
 
+int			check_input(char *str)
+{
+	char **array;
+	char *arr[] = {"-a", "-d", "-F", "-l", "-a", "-lh", "-ls",\
+	"-r", "-R", "-S", "-s", "-t", "-x", "-la", "-f", NULL};
+	int n;
+	
+	array = ft_strsplit(str, ' ');
+	n = 0;
+	if (arraylen(array) <= 2)
+	{
+		if (arraylen(array) == 2)
+		{
+			while (arr[n])
+			{
+				if (ft_strcmp(arr[n], array[1]) == 0)
+					return (1);
+				n++;
+			}
+		}
+		else
+			return (1);
+	}
+	return (0);
+}
+
 void		handle_ls(int fd, char *str)
 {
 	char *contents;
 
     contents = NULL;
-	ft_putendl(str);
-	if ((send(fd, "ls", 2, 0)) == -1)
-        handle_error(6);
-    contents = receive_all(fd);
-	show_output(contents);
-    free(contents);
+	if (check_input(str))
+	{
+		if ((send(fd, str, ft_strlen(str), 0)) == -1)
+			handle_error(6);
+		contents = receive_all(fd);
+		show_output(contents);
+		free(contents);
+	}
+	else
+		ft_err("Error in command or flags");
 }
