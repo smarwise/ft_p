@@ -12,6 +12,24 @@
 
 #include "../includes/client.h"
 
+int		connect_support(int socketfd, char *client_number, char buf[100])
+{
+	if ((recv(socketfd, buf, 100, 0)) != -1)
+		client_number = ft_strdup(buf);
+	else
+	{
+		ft_putendl("get client_number failed");
+		exit(0);
+	}
+	while (1)
+	{
+		read_input(socketfd, client_number);
+	}
+	free(client_number);
+	client_number = NULL;
+	close (socketfd);
+}
+
 int 	make_connection(int port, char *name)
 {
 	int socketfd;
@@ -20,6 +38,7 @@ int 	make_connection(int port, char *name)
 	char *client_number;
 	char buf[100];
 
+	client_number = NULL;
 	if ((he = gethostbyname(name)) == NULL)
 		handle_error(1);
 	if ((socketfd = socket(PF_INET, SOCK_STREAM, 0)) == -1)
@@ -32,21 +51,7 @@ int 	make_connection(int port, char *name)
 		handle_error(2);
 	ft_putendl("\033[1;12mConnected to server.....\033[0m");
 	ft_memset(buf, '\0', 100);
-	if ((recv(socketfd, buf, 100, 0)) != -1)
-		client_number = ft_strdup(buf);
-	else
-	{
-		ft_putendl("get client_number failed");
-		exit(0);
-	}
-		while (1)
-		{
-			read_input(socketfd, client_number);
-		}
-		free(client_number);
-		client_number = NULL;
-		close (socketfd);
-	return (0);
+	return (connect_support(socketfd, client_number, buf));
 }
 
 int	main(int argc, char **argv)

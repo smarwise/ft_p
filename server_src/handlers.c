@@ -44,7 +44,6 @@ void	send_cmds(char *str, int fd, char *client_number, char *owd)
 {
 	pid_t pid;
 
-	ft_putendl(owd);
 	if (ft_strcmp("pwd", str) == 0)
 		show_pwd(fd, client_number);
 	if (ft_strstr(str, "ls"))

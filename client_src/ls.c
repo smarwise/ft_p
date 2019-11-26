@@ -74,16 +74,12 @@ void show_output(char *contents)
 	print_arr(ls);
 }
 
-char 		*receive_all(int fd)
+char 		*receive_all(int fd, int numbytes, int total)
 {
-	int buflen;
-	char *buf;
-	char tmp[1000];
-	int numbytes;
-	int total;
+	int 	buflen;
+	char	*buf;
+	char 	tmp[1000];
 
-	numbytes = 0;
-	total = 0;
 	buf = NULL;
 	ft_memset(tmp, '\0', 1000);
 	if ((numbytes = recv(fd, tmp, 999, 0)) == -1)
@@ -140,7 +136,7 @@ void		handle_ls(int fd, char *str)
 	{
 		if ((send(fd, str, ft_strlen(str), 0)) == -1)
 			handle_error(6);
-		contents = receive_all(fd);
+		contents = receive_all(fd, 0, 0);
 		show_output(contents);
 		free(contents);
 	}

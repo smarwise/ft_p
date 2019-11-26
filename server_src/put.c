@@ -62,7 +62,6 @@ int    make_file(int fd, int fd1, char *file_name)
     char buf[1000];
     int numbytes;
 
-    ft_putendl(file_name);
     if ((fd1 = open(file_name, O_RDWR | O_CREAT,
         S_IRUSR | S_IWUSR)) == -1)
     {

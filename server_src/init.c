@@ -51,46 +51,41 @@ int    init_struct(struct sockaddr_in *sa, int port, int socketfd)
     return 0;
 }
 
-void    receive_data(int fd, char *client_number, char *owd)
-{
-    int     numbytes;
-    char *buf;
 
-    buf = (char *)malloc(sizeof(char) * MAXDATASIZE);
-    while (1)
+
+void    connect_help(struct sockaddr_in *their_addr, int new_fd, int socketfd)
+{
+    char *ip;
+    char *client_number;
+    static char *owd;
+
+    ip = get_ip(their_addr);
+    client_number = get_client_nu();
+    ft_putstr("\033[1;32mServer: got connection from \033[1;0m(");
+    ft_putstr(ip);
+    ft_putstr(") [");
+    ft_putstr(client_number);
+    ft_putendl("]");
+    if (send(new_fd, client_number, ft_strlen(client_number), 0) == -1)
     {
-        if ((numbytes = recv(fd, buf, MAXDATASIZE-1, 0)) == -1)
-            numbytes = 0;
-        if (numbytes > 0)
-        {
-            buf[numbytes] = '\0';
-            send_cmds(buf, fd, client_number, owd);
-        }
+        ft_putendl("get client_number failed");
+        return ;
     }
-}
-
-void error(char *msg)
-{
-    perror(msg);
-    exit (1);
-}
-
-char		*get_original_working_dir()
-{
-	char *owd;
-		
-	owd = (char *)malloc(sizeof(char) * FILENAME_MAX);
-	getcwd(owd, FILENAME_MAX);
-	return (owd);
+    if (!fork())
+    {
+        close(socketfd);
+        if (!owd)
+            owd = get_original_working_dir();
+        receive_data(new_fd, client_number, owd);
+        close(new_fd);
+        exit(0);
+    }
 }
 
 int	 be_connected(int socketfd, struct sockaddr_in *their_addr)
 { 
 	int new_fd;
     socklen_t sin_size;
-    char *ip;
-    char *client_number;
-    static char *owd;
     
     while (42)
     {
@@ -98,27 +93,7 @@ int	 be_connected(int socketfd, struct sockaddr_in *their_addr)
         if ((new_fd  = accept(socketfd,
                 (struct sockaddr *)their_addr, &sin_size)) != -1 )
         {
-            ip = get_ip(their_addr);
-            client_number = get_client_nu();
-            ft_putstr("\033[1;32mServer: got connection from \033[1;0m(");
-            ft_putstr(ip);
-            ft_putstr(") [");
-            ft_putstr(client_number);
-            ft_putendl("]");
-            if (send(new_fd, client_number, ft_strlen(client_number), 0) == -1)
-            {
-                ft_putendl("get client_number failed");
-                return -1;
-            }
-            if (!fork())
-            {
-                close(socketfd);
-                if (!owd)
-                    owd = get_original_working_dir();
-                receive_data(new_fd, client_number, owd);
-                close(new_fd);
-                exit(0);
-            }
+            connect_help(their_addr, new_fd, socketfd);
         }
         else
         {

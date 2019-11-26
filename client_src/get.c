@@ -54,6 +54,20 @@ int				check_file_exists(char *filename, char *name)
 	return (n);
 }
 
+int				check_valid(char *new_file, int *fd1, char *str)
+{
+	create_if_not_exists("downloads");
+	if (check_file_exists(new_file, str) == -1)
+		return (0);
+	if ((*fd1 = open(new_file, O_RDWR | O_CREAT,\
+					S_IRUSR | S_IWUSR)) == -1)
+	{
+		put_msg(1);
+		return (0);
+	}
+	return (1);
+}
+
 void			handle_get(int fd, char *str)
 {
 	char		**name;
@@ -64,26 +78,20 @@ void			handle_get(int fd, char *str)
 
 	name = ft_strsplit(str, ' ');
 	new_file = ft_strjoin("downloads/", name[1]);
-	create_if_not_exists("downloads");
-	if (check_file_exists(new_file, name[1]) == -1)
-		return ;
-	if ((fd1 = open(new_file, O_RDWR | O_CREAT,\
-					S_IRUSR | S_IWUSR)) == -1)
-	{
-		put_msg(1);
-		return;
-	}
 	ft_memset(buf, '\0', 1000);
-	if ((send(fd, str, ft_strlen(str), 0)) == -1)
-		handle_error(6);
-	while ((numbytes = recv(fd, buf, 999, 0)) != -1)
+	if (check_valid(new_file, &fd1, name[1]))
 	{
-		write(fd1, buf, numbytes);
-		if (numbytes < 999)
-			break;
+		if ((send(fd, str, ft_strlen(str), 0)) == -1)
+			handle_error(6);
+		while ((numbytes = recv(fd, buf, 999, 0)) != -1)
+		{
+			write(fd1, buf, numbytes);
+			if (numbytes < 999)
+				break;
+		}
+		if (numbytes != -1)
+			ft_putendl("\033[0;32mDownloading file successful\033[0m");
 	}
-	if (numbytes != -1)
-		ft_putendl("\033[0;32mDownloading file successful\033[0m");
 	free_2d_array((void**)name);
 	close(fd1);
 }
