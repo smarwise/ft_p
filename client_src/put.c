@@ -25,8 +25,10 @@ int     check_if_file(char *filename)
     int fd;
     int n;
 
+    ft_putendl(filename);
     fd = open(filename, O_RDONLY);
     n = 1;
+    ft_putnbr(fd);
     if (fstat(fd, &st) < 0)
     {
         ft_err("File does not exist");

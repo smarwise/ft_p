@@ -40,10 +40,11 @@ int		handle_error(int err)
 	exit (0);
 }
 
-void	send_cmds(char *str, int fd, char *client_number)
+void	send_cmds(char *str, int fd, char *client_number, char *owd)
 {
 	pid_t pid;
 
+	ft_putendl(owd);
 	if (ft_strcmp("pwd", str) == 0)
 		show_pwd(fd, client_number);
 	if (ft_strstr(str, "ls"))
@@ -60,9 +61,9 @@ void	send_cmds(char *str, int fd, char *client_number)
 	if (ft_strnstr(str, "cd", 2))
 		cd_dir(fd, str, client_number);
 	if (ft_strnstr(str, "put", 3))
-		put_file(fd, str, client_number);
+		put_file(fd, str, client_number, owd);
 	if (ft_strnstr(str, "get", 3))
-		get_file(fd, str, client_number);
+		get_file(fd, str, client_number, owd);
 }
 
 void	send_result(int n, int fd)

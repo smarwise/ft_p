@@ -51,7 +51,7 @@ int    init_struct(struct sockaddr_in *sa, int port, int socketfd)
     return 0;
 }
 
-void    receive_data(int fd, char *client_number)
+void    receive_data(int fd, char *client_number, char *owd)
 {
     int     numbytes;
     char *buf;
@@ -64,7 +64,7 @@ void    receive_data(int fd, char *client_number)
         if (numbytes > 0)
         {
             buf[numbytes] = '\0';
-            send_cmds(buf, fd, client_number);
+            send_cmds(buf, fd, client_number, owd);
         }
     }
 }
@@ -75,12 +75,22 @@ void error(char *msg)
     exit (1);
 }
 
+char		*get_original_working_dir()
+{
+	char *owd;
+		
+	owd = (char *)malloc(sizeof(char) * FILENAME_MAX);
+	getcwd(owd, FILENAME_MAX);
+	return (owd);
+}
+
 int	 be_connected(int socketfd, struct sockaddr_in *their_addr)
 { 
 	int new_fd;
     socklen_t sin_size;
     char *ip;
     char *client_number;
+    static char *owd;
     
     while (42)
     {
@@ -103,7 +113,9 @@ int	 be_connected(int socketfd, struct sockaddr_in *their_addr)
             if (!fork())
             {
                 close(socketfd);
-                receive_data(new_fd, client_number);
+                if (!owd)
+                    owd = get_original_working_dir();
+                receive_data(new_fd, client_number, owd);
                 close(new_fd);
                 exit(0);
             }

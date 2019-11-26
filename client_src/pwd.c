@@ -17,7 +17,8 @@ void		handle_pwd(int fd)
 	char *buf;
 	int numbytes;
 	
-	buf = (char *)malloc(sizeof(char) * 100);
+	buf = (char *)malloc(sizeof(char) * 1000);
+    ft_memset(buf, '\0', 1000);
 	if ((send(fd, "pwd", 3, 0)) == -1)
         handle_error(6);
     if ((numbytes = recv(fd, buf, MAXDATASIZE-1, 0)) == -1)

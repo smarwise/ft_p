@@ -29,7 +29,6 @@ void	show_pwd(int fd, char *client_number)
         print_msg("\033[1;32mpwd was a SUCCESS\033[0m", client_number);
     else
         print_msg("\033[1;31mpwd was a FAILURE\033[0m", client_number);
-    // free(path);
 }
 
 void    cd_dir(int fd, char *str, char *client_number)
@@ -52,15 +51,17 @@ void    cd_dir(int fd, char *str, char *client_number)
     }
 }
 
-void    get_file(int fd, char *str, char *client_number)
+void    get_file(int fd, char *str, char *client_number, char *owd)
 {
     char *file_name;
     int fd1;
     char buf[1000];
     int numbytes;
+    char *files;
 
+    files = ft_strjoin(owd, "/files/");
     print_cmd(str, client_number);
-    file_name = get_file_name(str);
+    file_name = get_file_name(str, files);
     if ((fd1 = open(file_name, O_RDONLY)) == -1)
     {
         print_msg("\033[1;31mFail: no such file exits in server\033[0m", client_number);
@@ -74,7 +75,6 @@ void    get_file(int fd, char *str, char *client_number)
             send_result(-1, fd);
         }
     }
-    // free(file_name);
     print_msg("\033[1;32mGet file successful\033[0m", client_number);
     close(fd1);
 }
