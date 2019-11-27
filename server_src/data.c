@@ -1,6 +1,6 @@
 #include "../includes/server.h"
 
-void    receive_data(t_var *var, t_global *globe)
+void    receive_data(t_var *var)
 {
     int     numbytes;
     char *buf;
@@ -13,7 +13,7 @@ void    receive_data(t_var *var, t_global *globe)
         if (numbytes > 0)
         {
             buf[numbytes] = '\0';
-            send_cmds(buf, var, globe);
+            send_cmds(buf, var);
         }
     }
 }

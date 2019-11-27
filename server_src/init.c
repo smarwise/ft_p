@@ -91,13 +91,11 @@ int	 be_connected(int socketfd, struct sockaddr_in *their_addr)
         if ((new_fd  = accept(socketfd,
                 (struct sockaddr *)their_addr, &sin_size)) != -1 )
         {
-            globe->nb_clients++;
             var = (t_var*)malloc(sizeof(t_var));
             var->fd = new_fd;
             var->cmd = NULL;
             var->quit = 0;
             connect_help(their_addr, var, socketfd, globe);
-            globe->nb_clients--;
         }
         else
         {
