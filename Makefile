@@ -2,7 +2,7 @@ client = client
 
 server = server
 
-FLAGS = gcc -Wall -Wextra -Werror
+FLAGS = gcc -g -Wall -Wextra -Werror
 
 client_obj = client_obj/main.o client_obj/get_cmds.o\
 			client_obj/put.o client_obj/handlers.o client_obj/cd.o\

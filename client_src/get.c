@@ -26,6 +26,8 @@ int   put_msg(int n)
 		ft_putendl("\033[0;31mFile with same name already exists in client\033[0m");
 	if (n == 1)
 		ft_putendl("\033[0;31mOpening of new file failed\033[0m");
+	if (n == 2)
+		ft_putendl("\033[0;31mDownloading file failed\033[0m");
 	return (-1);
 }
 
@@ -57,20 +59,22 @@ int				check_valid(char *new_file, int *fd1)
 	return (1);
 }
 
-void			create_file_if_not_err(int fd, char buf[1000], int fd1)
+int			create_file(int fd, char buf[1000], int fd1)
 {
 	int numbytes;
 	int k;
 
 	k = 0;
-	while ((numbytes = recv(fd, buf, 999, 0)) != -1)
+	ft_memset(buf, '\0', 1000);
+	while ((numbytes = recv(fd, buf, 999, 0)) > 0)
 	{
-		if (k == 0)
+		if (k == 0 && numbytes > 11)
 		{
 			if (ft_strcmp("Get error: ", ft_strsub(buf, 0, 11)) == 0)
 			{
+				put_msg(2);
 				ft_putendl(buf);
-				return ;
+				return (-1);
 			}
 		}
 		write(fd1, buf, numbytes);
@@ -80,6 +84,9 @@ void			create_file_if_not_err(int fd, char buf[1000], int fd1)
 	}
 	if (numbytes != -1)
 		ft_putendl("\033[0;32mDownloading file successful\033[0m");
+	else
+		return(put_msg(2));
+	return (1);
 }
 
 void			handle_get(int fd, char *str)
@@ -94,10 +101,14 @@ void			handle_get(int fd, char *str)
 	ft_memset(buf, '\0', 1000);
 	if (check_valid(new_file, &fd1))
 	{
-		if ((send(fd, str, ft_strlen(str), 0)) == -1)
+		if ((send(fd, str, ft_strlen(str), 0)) <= 0)
+		{
 			handle_error(6);
-		create_file_if_not_err(fd, buf, fd1);
+			return;
+		}
+		if ((create_file(fd, buf, fd1)) == -1)
+			unlink(new_file);
+		close(fd1);
 	}
 	free_2d_array((void**)name);
-	close(fd1);
 }

@@ -60,16 +60,19 @@ int     check_if_file(char *filename, int fd1)
     if (fstat(fd, &st) < 0)
     {
         send(fd1, "Get error: File does not exist", 31, 0);
+        close(fd);
         return (-1);
     }
     if (S_ISDIR(st.st_mode))
     {
         send(fd1, "Get error: Selected file is a directory", 40, 0);
+        close(fd);
         return (-1);
     }
     if (fd == -1)
     {
         send(fd1, "Get error: Selected file cannot be processed", 45, 0);
+        close(fd);
         return (-1);
     }
     close(fd);
@@ -88,7 +91,6 @@ int    create_file(int *fd1, char *path, char *str, int fd)
     arr = ft_strsplit(str, ' ');
     temp = ft_strjoin(path, "/");
     name = ft_strjoin(temp, arr[1]);
-    ft_putendl(name);
     if ((check_if_file(name, fd)) == -1)
         return (-1);
     if ((*fd1 = open(name, O_RDONLY)) == -1)
@@ -113,7 +115,7 @@ void    get_file(int fd, char *str, char *client_number)
         print_msg("\033[1;31m\033[0m", client_number);
         send_result(-1, fd);
     }
-    if (!(create_file(&fd1, path, str, fd)))
+    if ((create_file(&fd1, path, str, fd)) == -1)
         return ;
     while ((numbytes = read(fd1, buf, 1000)) > 0)
     {
