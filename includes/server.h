@@ -26,7 +26,7 @@ void	send_cmds(char *str, int fd, char *client_number, char *owd);
 void    handle_fail_success(int n);
 void    cd_dir(int fd, char *str, char *client_number);
 void    put_file(int fd, char *str, char *client_number, char *owd);
-void    get_file(int fd, char *str, char *client_number, char *owd);
+void    get_file(int fd, char *str, char *client_number);
 void	send_result(int n, int fd);
 char    *get_file_name(char *str, char *files);
 void	print_cmd(char *str, char *client_number);

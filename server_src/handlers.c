@@ -46,7 +46,7 @@ void	send_cmds(char *str, int fd, char *client_number, char *owd)
 
 	if (ft_strcmp("pwd", str) == 0)
 		show_pwd(fd, client_number);
-	if (ft_strstr(str, "ls"))
+	else if (ft_strstr(str, "ls"))
 	{
 		pid = fork();
 		if (pid == 0)
@@ -57,12 +57,12 @@ void	send_cmds(char *str, int fd, char *client_number, char *owd)
 		else
 			wait4(pid, 0, 0, 0);
 	}
-	if (ft_strnstr(str, "cd", 2))
+	else if (ft_strnstr(str, "cd", 2))
 		cd_dir(fd, str, client_number);
-	if (ft_strnstr(str, "put", 3))
+	else if (ft_strnstr(str, "put", 3))
 		put_file(fd, str, client_number, owd);
-	if (ft_strnstr(str, "get", 3))
-		get_file(fd, str, client_number, owd);
+	else if (ft_strnstr(str, "get", 3))
+		get_file(fd, str, client_number);
 }
 
 void	send_result(int n, int fd)

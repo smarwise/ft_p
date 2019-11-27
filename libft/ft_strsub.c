@@ -12,31 +12,18 @@
 
 #include "libft.h"
 
-char		*ft_strsub(char const *s, unsigned int start, size_t len)
+char	*ft_strsub(char const *s, unsigned int start, size_t len)
 {
 	char	*str;
-	size_t	slen;
-	size_t	i;
-	size_t	n;
+	size_t	index;
 
-	str = NULL;
-	if (s != NULL)
-	{
-		i = 0;
-		n = start;
-		slen = ft_strlen(s);
-		str = (char *)malloc(sizeof(char) * len + 1);
-		if (str == NULL)
-			return (NULL);
-		if (start + len > slen)
-			return (NULL);
-		while (n < len + start)
-		{
-			str[i] = s[n];
-			i++;
-			n++;
-		}
-		str[i] = '\0';
-	}
-	return ((char *)str);
+	if (s == NULL)
+		return (NULL);
+	index = 0;
+	str = ft_strnew(len);
+	if (str == NULL)
+		return (NULL);
+	while (len-- && s[start])
+		str[index++] = s[start++];
+	return (str);
 }

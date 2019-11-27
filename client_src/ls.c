@@ -40,16 +40,16 @@ char 		*receive_all(int fd, int numbytes, int total)
 	ft_memset(tmp, '\0', 1000);
 	buf = (char *)malloc(sizeof(char) * (1000));
 	ft_memset(buf, '\0', 1000);
-	total = 0;
-	ft_memset(tmp, '\0', 1000);
+	total = 1000;
 	while ((numbytes = recv(fd, tmp, 999, 0)) > 0)
 	{
 	    buf = ft_strcat(buf, tmp);
-	    total += numbytes;
 	    if (numbytes < 999)
 	    	break;
 	    buf = realloc(buf, total + 1000);
 		ft_memset(tmp, '\0', 1000);
+		ft_memset(buf + total, '\0', 1000);
+	    total += numbytes;
 	}
 	buf[total + 1] = '\0';
 	return(buf);

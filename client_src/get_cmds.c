@@ -30,7 +30,10 @@ void		process_args(char *str, int fd)
 	else if (ft_strcmp(array[0], "get") == 0)
 		handle_get(fd, str);
 	else
+	{
 		ft_putendl("\033[0;31mCommand not recognized\033[0m");
+		return ;
+	}
 	free_2d_array((void **)array);
 	array = NULL;
 }

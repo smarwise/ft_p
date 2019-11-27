@@ -25,6 +25,7 @@ typedef struct		s_list
 	struct s_list	*next;
 }					t_list;
 
+size_t				ft_delimcountwords(const char *s, char c);
 char				*ft_itoa_base(u_int64_t value, int base);
 int					ft_count_words(char *str);
 char				**arraypush(char **array, char *str);
