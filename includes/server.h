@@ -17,23 +17,38 @@
 #include <dirent.h>
 #include <fcntl.h>
 
+typedef struct s_var
+{
+    char *cmd;
+    int fd;
+    int quit;
+    char *client_number;
+    char *owd;
+}               t_var;
+
+typedef struct s_global
+{
+    int    nb_clients;
+}               t_global;
+
 int     init(char *str);
 void    sigchild_handler();
 int     handle_error(int err);
-void	ls_dir(int fd, char *client_number, char *str);
-void	show_pwd(int fd, char *client_number);
-void	send_cmds(char *str, int fd, char *client_number, char *owd);
+void	ls_dir(t_var *var, char *str);
+void	show_pwd(t_var *var);
 void    handle_fail_success(int n);
-void    cd_dir(int fd, char *str, char *client_number);
-void    put_file(int fd, char *str, char *client_number, char *owd);
-void    get_file(int fd, char *str, char *client_number);
+void    cd_dir(t_var *var, char *str);
+void    put_file(t_var *var, char *str);
+void    get_file(t_var *var, char *str);
 void	send_result(int n, int fd);
 char    *get_file_name(char *str, char *files);
 void	print_cmd(char *str, char *client_number);
 char    *get_ip(struct sockaddr_in *sa);
 void	print_msg(char *msg, char *client_number);
-void    receive_data(int fd, char *client_number, char *owd);
+void    receive_data(t_var *var);
 void    error(char *msg);
 char    *get_original_working_dir();
+void    quit(t_var *var);
+void	send_cmds(char *str, t_var *var);
 
 #endif

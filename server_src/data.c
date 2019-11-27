@@ -1,19 +1,19 @@
 #include "../includes/server.h"
 
-void    receive_data(int fd, char *client_number, char *owd)
+void    receive_data(t_var *var, t_global *globe)
 {
     int     numbytes;
     char *buf;
 
     buf = (char *)malloc(sizeof(char) * MAXDATASIZE);
-    while (1)
+    while (var->quit == 0)
     {
-        if ((numbytes = recv(fd, buf, MAXDATASIZE-1, 0)) == -1)
+        if ((numbytes = recv(var->fd, buf, MAXDATASIZE-1, 0)) == -1)
             numbytes = 0;
         if (numbytes > 0)
         {
             buf[numbytes] = '\0';
-            send_cmds(buf, fd, client_number, owd);
+            send_cmds(buf, var, globe);
         }
     }
 }

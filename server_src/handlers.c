@@ -40,29 +40,31 @@ int		handle_error(int err)
 	exit (0);
 }
 
-void	send_cmds(char *str, int fd, char *client_number, char *owd)
+void	send_cmds(char *str, t_var *var)
 {
 	pid_t pid;
 
 	if (ft_strcmp("pwd", str) == 0)
-		show_pwd(fd, client_number);
+		show_pwd(var);
 	else if (ft_strstr(str, "ls"))
 	{
 		pid = fork();
 		if (pid == 0)
 		{
-			ls_dir(fd, client_number, str);
+			ls_dir(var, str);
 			exit (0);
 		}
 		else
 			wait4(pid, 0, 0, 0);
 	}
 	else if (ft_strnstr(str, "cd", 2))
-		cd_dir(fd, str, client_number);
+		cd_dir(var, str);
 	else if (ft_strnstr(str, "put", 3))
-		put_file(fd, str, client_number, owd);
+		put_file(var, str);
 	else if (ft_strnstr(str, "get", 3))
-		get_file(fd, str, client_number);
+		get_file(var, str);
+	else if (ft_strcmp(str, "quit") == 0)
+		quit(var);
 }
 
 void	send_result(int n, int fd)

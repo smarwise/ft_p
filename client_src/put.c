@@ -14,6 +14,7 @@
 
 void		handle_exit(int fd)
 {
+    send(fd, "quit", 4, 0);
 	close(fd);
 	ft_putendl("\033[0;33mConnection successfully closed\033[0m");
 	exit(0);

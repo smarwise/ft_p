@@ -12,41 +12,41 @@
 
 #include "../includes/server.h"
 
-void	show_pwd(int fd, char *client_number)
+void	show_pwd(t_var *var)
 {
 	char *path;
 
-    print_cmd("pwd", client_number);
+    print_cmd("pwd", var->client_number);
 	path = (char *)malloc(sizeof(char) * FILENAME_MAX);
 	if ((getcwd(path, FILENAME_MAX)) == NULL)
     {
-        print_msg("\033[1;31mpwd was a FAILURE\033[0m", client_number);
-        if ((send(fd, "fail", 4, 0)) == -1)
-            print_msg("\033[1;32mfailed to send fail message\033[0m", client_number);
+        print_msg("\033[1;31mpwd was a FAILURE\033[0m", var->client_number);
+        if ((send(var->fd, "fail", 4, 0)) == -1)
+            print_msg("\033[1;32mfailed to send fail message\033[0m", var->client_number);
         exit(0);
     }
-	if ((send(fd, path, ft_strlen(path), 0)) != -1)
-        print_msg("\033[1;32mpwd was a SUCCESS\033[0m", client_number);
+	if ((send(var->fd, path, ft_strlen(path), 0)) != -1)
+        print_msg("\033[1;32mpwd was a SUCCESS\033[0m", var->client_number);
     else
-        print_msg("\033[1;31mpwd was a FAILURE\033[0m", client_number);
+        print_msg("\033[1;31mpwd was a FAILURE\033[0m", var->client_number);
 }
 
-void    cd_dir(int fd, char *str, char *client_number)
+void    cd_dir(t_var *var, char *str)
 {
     char **cmd;
 
-    print_cmd(str, client_number);
+    print_cmd(str, var->client_number);
     cmd = ft_strsplit(str, ' ');
     if (chdir(cmd[1]) == 0)
     {
-        print_msg("\033[0;33mDirectory change success\033[0m", client_number);
-        if (send(fd, "success", 7, 0) == -1)
+        print_msg("\033[0;33mDirectory change success\033[0m", var->client_number);
+        if (send(var->fd, "success", 7, 0) == -1)
             handle_error(6);
     }
     else
     {
-        print_msg("\033[0;31mDirectory change failed\033[0m", client_number);
-        if (send(fd, "fail", 4, 0) == -1)
+        print_msg("\033[0;31mDirectory change failed\033[0m", var->client_number);
+        if (send(var->fd, "fail", 4, 0) == -1)
             handle_error(6);
     }
 }
@@ -101,30 +101,30 @@ int    create_file(int *fd1, char *path, char *str, int fd)
     return (1);
 }
 
-void    get_file(int fd, char *str, char *client_number)
+void    get_file(t_var *var, char *str)
 {
     int fd1;
     char buf[1000];
     int numbytes;
     char *path;
 
-    print_cmd(str, client_number);
+    print_cmd(str, var->client_number);
     path = (char *)malloc(sizeof(char) * FILENAME_MAX);
 	if ((getcwd(path, FILENAME_MAX)) == NULL)
     {
-        print_msg("\033[1;31m\033[0m", client_number);
-        send_result(-1, fd);
+        print_msg("\033[1;31m\033[0m", var->client_number);
+        send_result(-1, var->fd);
     }
-    if ((create_file(&fd1, path, str, fd)) == -1)
+    if ((create_file(&fd1, path, str, var->fd)) == -1)
         return ;
     while ((numbytes = read(fd1, buf, 1000)) > 0)
     {
-        if ((send(fd, buf, numbytes, 0)) == -1)
+        if ((send(var->fd, buf, numbytes, 0)) == -1)
         {
-            print_msg("\033[1;31mFail: no such file exits in server\033[0m", client_number);
-            send_result(-1, fd);
+            print_msg("\033[1;31mFail: no such file exits in server\033[0m", var->client_number);
+            send_result(-1, var->fd);
         }
     }
-    print_msg("\033[1;32mGet file successful\033[0m", client_number);
+    print_msg("\033[1;32mGet file successful\033[0m", var->client_number);
     close(fd1);
 }

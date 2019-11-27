@@ -12,21 +12,18 @@
 
 #include "../includes/server.h"
 
-char    *get_client_nu()
+void    get_client_nu(t_var *var, t_global *globe)
 {
-    static int i = 1;
-    char *client_number;
     char *tmp;
     char *tmp2;
 
-    tmp = ft_itoa(i);
+    tmp = ft_itoa(globe->nb_clients);
     tmp2 = ft_strdup("00");
-    client_number = ft_strnew(50);
-    client_number = ft_memset(client_number, '\0', 50);
-    client_number = ft_strcat(tmp2, tmp);
+    var->client_number = ft_strnew(50);
+    ft_memset(var->client_number, '\0', 50);
+    var->client_number = ft_strcat(tmp2, tmp);
     free(tmp);
-    i++;
-    return (client_number);
+    globe->nb_clients++;
 }
 
 int    init_struct(struct sockaddr_in *sa, int port, int socketfd)
@@ -51,22 +48,19 @@ int    init_struct(struct sockaddr_in *sa, int port, int socketfd)
     return 0;
 }
 
-
-
-void    connect_help(struct sockaddr_in *their_addr, int new_fd, int socketfd)
+void    connect_help(struct sockaddr_in *their_addr, t_var *var,\
+        int socketfd, t_global *globe)
 {
     char *ip;
-    char *client_number;
-    static char *owd;
 
     ip = get_ip(their_addr);
-    client_number = get_client_nu();
+    get_client_nu(var, globe);
     ft_putstr("\033[1;32mServer: got connection from \033[1;0m(");
     ft_putstr(ip);
     ft_putstr(") [");
-    ft_putstr(client_number);
+    ft_putstr(var->client_number);
     ft_putendl("]");
-    if (send(new_fd, client_number, ft_strlen(client_number), 0) == -1)
+    if (send(var->fd, var->client_number, ft_strlen(var->client_number), 0) == -1)
     {
         ft_putendl("get client_number failed");
         return ;
@@ -74,10 +68,10 @@ void    connect_help(struct sockaddr_in *their_addr, int new_fd, int socketfd)
     if (!fork())
     {
         close(socketfd);
-        if (!owd)
-            owd = get_original_working_dir();
-        receive_data(new_fd, client_number, owd);
-        close(new_fd);
+        if (!var->owd)
+            var->owd = get_original_working_dir();
+        receive_data(var);
+        close(var->fd);
         exit(0);
     }
 }
@@ -86,14 +80,24 @@ int	 be_connected(int socketfd, struct sockaddr_in *their_addr)
 { 
 	int new_fd;
     socklen_t sin_size;
-    
+    t_var   *var;
+    t_global *globe;
+
+    globe = (t_global*)malloc(sizeof(t_global));
+    globe->nb_clients = 0;
     while (42)
     {
         sin_size = sizeof(*their_addr);
         if ((new_fd  = accept(socketfd,
                 (struct sockaddr *)their_addr, &sin_size)) != -1 )
         {
-            connect_help(their_addr, new_fd, socketfd);
+            globe->nb_clients++;
+            var = (t_var*)malloc(sizeof(t_var));
+            var->fd = new_fd;
+            var->cmd = NULL;
+            var->quit = 0;
+            connect_help(their_addr, var, socketfd, globe);
+            globe->nb_clients--;
         }
         else
         {

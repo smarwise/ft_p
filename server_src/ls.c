@@ -77,7 +77,7 @@ int     sendall(int fd, char *buf, int len, char *client_number)
     return (total);
 }
 
-void	ls_dir(int fd, char *client_number, char *str)
+void	ls_dir(t_var *var, char *str)
 {
     char *result;
     int ressize;
@@ -85,7 +85,7 @@ void	ls_dir(int fd, char *client_number, char *str)
     char **array;
     int bytessent;
 
-    print_cmd("ls", client_number);
+    print_cmd("ls", var->client_number);
     array = ft_strsplit(str, ' ');
     if (arraylen(array) == 2)
     {
@@ -97,7 +97,7 @@ void	ls_dir(int fd, char *client_number, char *str)
         char *args[2] = {"ls", NULL};
         reader(&result, &ressize, buf, args);
     }
-    bytessent = sendall(fd, result, ft_strlen(result), client_number);
+    bytessent = sendall(var->fd, result, ft_strlen(result), var->client_number);
     if (bytessent == 0)
-        send(fd, "\033[0;31mls failed\033[0m", 26, 0);
+        send(var->fd, "\033[0;31mls failed\033[0m", 26, 0);
 }

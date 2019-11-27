@@ -84,26 +84,26 @@ int    make_file(int fd, int fd1, char *file_name)
     return (0);
 }
 
-void    put_file(int fd, char *str, char *client_number, char *owd)
+void    put_file(t_var *var, char *str)
 {
     char *file_name;
     int fd1;
     char *f;
     char *files;
 
-    print_cmd(str, client_number);
+    print_cmd(str, var->client_number);
     fd1 = 0;
-    f = ft_strjoin(owd, "/");
+    f = ft_strjoin(var->owd, "/");
     files = ft_strjoin(f, "files/");
     file_name = get_file_name(str, files);
-    if (check_file(file_name, fd, client_number) == -1)
+    if (check_file(file_name, var->fd, var->client_number) == -1)
         return;
     create_if_not_exists(files);
-    if (make_file(fd, fd1, file_name) == -1)
+    if (make_file(var->fd, fd1, file_name) == -1)
         return;
     else
     {
-        send_result(1, fd);
-        print_msg("\033[1;32mFile put was a success\033[0m", client_number);
+        send_result(1, var->fd);
+        print_msg("\033[1;32mFile put was a success\033[0m", var->client_number);
     }
 }

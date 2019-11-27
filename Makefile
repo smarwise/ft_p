@@ -10,7 +10,7 @@ client_obj = client_obj/main.o client_obj/get_cmds.o\
      
 server_obj = server_obj/main.o server_obj/handlers.o server_obj/init.o\
 			server_obj/cmds.o server_obj/ls.o server_obj/put.o\
-			server_obj/data.o\
+			server_obj/data.o server_obj/quit.o\
 
 $(client) : $(client_obj)
 	make -C libft
