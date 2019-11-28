@@ -59,19 +59,19 @@ int     check_if_file(char *filename, int fd1)
     fd = open(filename, O_RDONLY);
     if (fstat(fd, &st) < 0)
     {
-        send(fd1, "Get error: File does not exist", 31, 0);
+        send(fd1, "31 Get error: File does not exist", 34, 0);
         close(fd);
         return (-1);
     }
     if (S_ISDIR(st.st_mode))
     {
-        send(fd1, "Get error: Selected file is a directory", 40, 0);
+        send(fd1, "40 Get error: Selected file is a directory", 43, 0);
         close(fd);
         return (-1);
     }
     if (fd == -1)
     {
-        send(fd1, "Get error: Selected file cannot be processed", 45, 0);
+        send(fd1, "45 Get error: Selected file cannot be processed", 48, 0);
         close(fd);
         return (-1);
     }
@@ -79,15 +79,27 @@ int     check_if_file(char *filename, int fd1)
     return (1);
 }
 
+int     get_file_size(int fd)
+{
+    int total;
+    int numbytes;
+    char buf[1000];
 
-int    create_file(int *fd1, char *path, char *str, int fd)
+    total = 0;
+    numbytes = 0;
+    while ((numbytes = read(fd, buf, 1000)) > 0)
+    {
+       total += numbytes;
+    }
+    return (total);
+}
+
+int    create_file(int *fd1, char *path, char *str, int fd, int *size)
 {
     char *name;
     char *temp;
     char **arr;
-    int n;
 
-    n = 1;
     arr = ft_strsplit(str, ' ');
     temp = ft_strjoin(path, "/");
     name = ft_strjoin(temp, arr[1]);
@@ -98,6 +110,9 @@ int    create_file(int *fd1, char *path, char *str, int fd)
         send(fd, "\033[1;31mFail: no such file exits in server\033[0m", 46, 0);
         return (-1);
     }
+    *size = get_file_size(*fd1);
+    close(*fd1);
+    *fd1 = open(name, O_RDONLY);
     return (1);
 }
 
@@ -107,7 +122,12 @@ void    get_file(t_var *var, char *str)
     char buf[1000];
     int numbytes;
     char *path;
+    int k;
+    int size;
+    char *temp;
+    char *temp2;
 
+    k = 0;
     print_cmd(str, var->client_number);
     path = (char *)malloc(sizeof(char) * FILENAME_MAX);
 	if ((getcwd(path, FILENAME_MAX)) == NULL)
@@ -115,15 +135,27 @@ void    get_file(t_var *var, char *str)
         print_msg("\033[1;31m\033[0m", var->client_number);
         send_result(-1, var->fd);
     }
-    if ((create_file(&fd1, path, str, var->fd)) == -1)
+    if ((create_file(&fd1, path, str, var->fd, &size)) == -1)
         return ;
-    while ((numbytes = read(fd1, buf, 1000)) > 0)
+    ft_memset(buf, '\0', 1000);
+    while ((numbytes = read(fd1, buf, 999)) > 0)
     {
-        if ((send(var->fd, buf, numbytes, 0)) == -1)
+        if (k == 0)
         {
-            print_msg("\033[1;31mFail: no such file exits in server\033[0m", var->client_number);
-            send_result(-1, var->fd);
+            temp = ft_strjoin(ft_itoa(size), " ");
+            temp2 = ft_strjoin(temp, buf);
+            send(var->fd, temp2, ft_strlen(temp) + numbytes, 0);
         }
+        else
+        {
+            if ((send(var->fd, buf, numbytes, 0)) == -1)
+            {
+                print_msg("\033[1;31mFail: no such file exits in server\033[0m", var->client_number);
+                send_result(-1, var->fd);
+            }
+        }
+        ft_memset(buf, '\0', 1000);
+        k++;
     }
     print_msg("\033[1;32mGet file successful\033[0m", var->client_number);
     close(fd1);

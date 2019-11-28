@@ -59,28 +59,44 @@ int				check_valid(char *new_file, int *fd1)
 	return (1);
 }
 
+
 int			create_file(int fd, char buf[1000], int fd1)
 {
 	int numbytes;
 	int k;
+	int datasize;
+	int total;
 
 	k = 0;
+	total = 0;
 	ft_memset(buf, '\0', 1000);
-	while ((numbytes = recv(fd, buf, 999, 0)) > 0)
+	datasize = 1;
+	while (total < datasize)
 	{
-		if (k == 0 && numbytes > 11)
+		if ((numbytes = recv(fd, (void *)buf, 999, 0)) > 0)
 		{
-			if (ft_strcmp("Get error: ", ft_strsub(buf, 0, 11)) == 0)
+			if (k == 0)
 			{
-				put_msg(2);
-				ft_putendl(buf);
-				return (-1);
+				datasize = ft_atoi(buf);
+				if (ft_strcmp("Get error: ", ft_strsub(buf + 3, 0, 11)) == 0)
+				{
+					put_msg(2);
+					ft_putendl(buf + 3);
+					return (-1);
+				}
+				write(fd1, buf + ((ft_strlen(ft_itoa(datasize)) + 1)), numbytes - ((ft_strlen(ft_itoa(datasize)) + 1)));
+				datasize += ft_strlen(ft_itoa(datasize)) + 1;
 			}
+			else
+			{
+				write(fd1, buf, numbytes);
+				byteswritten += numbytes;
+			}
+			total += numbytes;
+			k++;
 		}
-		write(fd1, buf, numbytes);
-		if (numbytes < 999)
+		else
 			break;
-		k++;
 	}
 	if (numbytes != -1)
 		ft_putendl("\033[0;32mDownloading file successful\033[0m");
